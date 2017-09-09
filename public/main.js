@@ -10041,9 +10041,7 @@ class Controller {
     captureInput() {
         return (function ($return, $error) {
             this.state.writing = false;
-            console.log('Called cappputred input');
             return $return(new Promise((resolve) => {
-                console.log('Called cappputred input, inside promise');
                 this.capturePromiseResolve = resolve;
             }));
         }).$asyncbind(this, true);
@@ -10082,9 +10080,7 @@ class Controller {
         (() => {
             return (function ($return, $error) {
                 return this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/10.").then((function ($await_6) {
-                    console.log("FINSIHED");
                     return this.captureInput().then((function ($await_7) {
-                        console.log('CAPUTER INPUT FINSIHE');
                         return this.typeString("jlfjewlkfjwelk").then((function ($await_8) {
                             return $return();
                         }).$asyncbind(this, $error), $error);

@@ -59,9 +59,7 @@ class Controller {
 
   async captureInput() {
     this.state.writing = false;
-      console.log('Called cappputred input');
     return new Promise((resolve) => {
-      console.log('Called cappputred input, inside promise');
       this.capturePromiseResolve = resolve;
     });
   }
@@ -81,9 +79,7 @@ class Controller {
   run() {
     (async ()=> {
       await this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/10.")
-      console.log("FINSIHED");
       await this.captureInput();
-      console.log('CAPUTER INPUT FINSIHE');
       await this.typeString("jlfjewlkfjwelk");
 
     })()
