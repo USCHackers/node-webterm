@@ -68,7 +68,7 @@ class Controller {
 
   async typeCharacter(character, done) {
     this.term.write(character);
-    await timeout(1);
+    await timeout(25);
   }
 
   async typeString(buffer) {
@@ -80,7 +80,7 @@ class Controller {
 
   run() {
     (async ()=> {
-      await this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/10.")
+      await this.typeString("You are invited to come to our Hacker Orientation on 9/10.")
       await this.captureInput();
       await this.typeString("jlfjewlkfjwelk");
 
