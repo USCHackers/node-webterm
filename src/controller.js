@@ -14,6 +14,14 @@ class Controller {
 
     // Storage
     this.capturedValeus = [];
+//
+//     this.hackOn = '%c\n
+//     __  __     ______     ______     __  __        ______     __   __
+//    /\ \_\ \   /\  __ \   /\  ___\   /\ \/ /       /\  __ \   /\  -.\ \
+//    \ \  __ \  \ \  __ \  \ \ \____  \ \  _ -.     \ \ \/\ \  \ \ \-.  \
+//     \ \_\ \_\  \ \_\ \_\  \ \_____\  \ \_\ \_\     \ \_____\  \ \_\\ \_\
+//      \/_/\/_/   \/_/\/_/   \/_____/   \/_/\/_/      \/_____/   \/_/ \/_/
+// \n'
 
     // Setup terminal loop
     this.term = term;
@@ -73,6 +81,7 @@ class Controller {
 
   async typeString(buffer) {
     // This will write to the terminal with a certain speed
+    console.log(buffer.substring(0,2));
     for (var i = 0; i < buffer.length; i++) {
       await this.typeCharacter(buffer[i])
     }
@@ -80,10 +89,38 @@ class Controller {
 
   run() {
     (async ()=> {
-      await this.typeString("You are invited to come to our Hacker Orientation on 9/10.")
+      await this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/20.")
+      this.term.state.setCursor(0, this.term.state.cursor.y + 1);
+      await this.typeString("Projects. ");
+      await timeout(1);
+      await this.typeString("Boba. ");
+      await timeout(1);
+      await this.typeString("Hackers. ");
+      await timeout(1);
+      this.term.state.setCursor(0, this.term.state.cursor.y + 2);
+      await this.typeString("You down? ");
+      await timeout(1);
+      await this.typeString("Enter your full name: ");
       await this.captureInput();
-      await this.typeString("jlfjewlkfjwelk");
+      await this.typeString("And your usc email: ");
+      await this.captureInput();
+      await this.typeString("We'll see you at 7 on 9/20 in Annenberg West Lobby.");
+      this.term.state.setCursor(0, this.term.state.cursor.y + 2);
 
+      // await this.typeString(this.hackOn);
+      await timeout(1);
+      await this.typeString("You\'re still here? Might want to view the page source...");
+      this.term.state.setCursor(0, this.term.state.cursor.y + 1);
+      await timeout(1);
+      await this.typeString("???: ");
+      await this.captureInput();
+
+      // take input and check for equality to '000242dc7a5257e1f265578cdcc6c3fd'
+      this.term.state.setCursor(0, this.term.state.cursor.y + 1);
+      await this.typeString("You were added to the list \"TOP SECRET\". We\'ll be in touch soon. Hack On.")
+      // write to output.txt/csv on server-side
+
+      return;
     })()
   }
 }
