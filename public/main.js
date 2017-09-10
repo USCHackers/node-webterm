@@ -3,15 +3,15 @@
 Function.prototype.$asyncbind=function anonymous(self,catcher /*``*/) { var resolver = this; if (catcher===true) { if (!Function.prototype.$asyncbind.EagerThenable) Function.prototype.$asyncbind.EagerThenable = function factory(tick){ var _tasks = [] ; if (!tick) { try { tick = process.nextTick ; } catch (ex) { tick = function(p) { setTimeout(p,0) } } } function _untask(){ for (var i=0; i<_tasks.length; i+=2) { var t = _tasks[i+1], r = _tasks[i] ; for (var j=0; j<t.length; j++) t[j].call(null,r) ; } _tasks = [] ; } function isThenable(obj) { return obj && (obj instanceof Object) && typeof obj.then==="function"; } function EagerThenable(resolver) { function done(inline){ var w ; if (_sync || phase<0 || (w = _thens[phase]).length===0) return ; _tasks.push(result,w) ; _thens = [[],[]] ; if (_tasks.length===2) inline?_untask():tick(_untask) ; } function resolveThen(x){ if (phase>=0) return ; if (isThenable(x)) return x.then(resolveThen,rejectThen) ; phase = 0 ; result = x ; done(true) ; } function rejectThen(x){ if (phase>=0) return ; if (isThenable(x)) return x.then(resolveThen,rejectThen) ; phase = 1 ; result = x ; done(true) ; } function settler(resolver,rejecter){ _thens[0].push(resolver) ; _thens[1].push(rejecter) ; done() ; } function toString() { return "EagerThenable{"+{'-1':"pending",0:"resolved",1:"rejected"}[phase]+"}="+result.toString() ; } function guard() { try { resolver.call(null,resolveThen,rejectThen) ; } catch (ex) { rejectThen(ex) ; } } this.then = settler ; this.toString = toString ; var _thens = [[],[]], _sync = true, phase = -1, result ; guard() ; _sync = false ; done() ; } EagerThenable.resolve = function(v){ return isThenable(v) ? v : {then:function(resolve,reject){return resolve(v)}}; }; return EagerThenable ; }(); return new (Function.prototype.$asyncbind.EagerThenable)(boundThen); } if (catcher) { if (Function.prototype.$asyncbind.wrapAsyncStack) catcher = Function.prototype.$asyncbind.wrapAsyncStack(catcher); return then; } function then(result,error){ try { return result && (result instanceof Object) && typeof result.then==='function' ? result.then(then,catcher) : resolver.call(self,result,error||catcher); } catch (ex) { return (error||catcher)(ex); } } function boundThen(result,error) { return resolver.call(self,result,error); } boundThen.then = boundThen; return boundThen; };window.$error=window.$error||function(e){throw e};
 const Controller = require('./src/controller.js');
 const Terminal = require('terminal.js');
-var termContainer = document.getElementById('terminaljs');
-term = new Terminal({
+let termContainer = document.getElementById('terminaljs');
+let term = new Terminal({
     columns: 80,
     row: 24
 });
 let controller = new Controller(term, termContainer);
 controller.run();
 window.onload = function () {
-    var input = document.getElementById("terminaljs").focus();
+    document.getElementById('terminaljs').focus();
 };
 
 
@@ -9995,11 +9995,13 @@ function timeout(ms) {
 
 class Controller {
     constructor(term, termContainer) {
-        this.state = {};
-        this.state.writing = true; //  If the this is writing, don't allow user input
-        this.state.currentBuffer = ""; //  This is the current user input.
-        this.capturedValeus = [];
+        // State
+        this.printing = true; //  If the this is writing, don't allow user input
+        this.currentBuffer = ""; //  This is the current user input.
         this.capturePromiseResolve = null;
+        // Storage
+        this.capturedValeus = [];
+        // Setup terminal loop
         this.term = term;
         this.dest = new Stream({
             decodeStrings: false,
@@ -10007,32 +10009,33 @@ class Controller {
         });
         this.dest.writable = true;
         this.term.dom(termContainer).pipe(this.dest);
+        // Bind methods to `this`
         this.dest.write = this.handleCharacter.bind(this);
         this.captureInput = this.captureInput.bind(this);
     }
     handleCharacter(data) {
-        if (this.state.writing) {
-            console.log('Not in writing state, ignoring character');
+        if (this.printing) {
+            console.trace('In writing state, ignoring character');
             return;
         }
         if (data.length === 1 && data[0] === 127) {
-            if (this.state.currentBuffer.length > 0) {
+            if (this.currentBuffer.length > 0) {
                 this.term.write('\b');
                 this.term.state.removeChar(1);
-                this.state.currentBuffer = this.state.currentBuffer.slice(0, -1);
+                this.currentBuffer = this.currentBuffer.slice(0, -1);
             }
             return;
         }
         if (data.length === 1 && data[0] >= 32 && data[0] <= 125) {
             this.term.write(data);
-            this.state.currentBuffer += data.toString();
+            this.currentBuffer += data.toString();
         }
-        if (data.length === 1 && data[0] === 13 && this.state.currentBuffer.length != 0) {
+        if (data.length === 1 && data[0] === 13 && this.currentBuffer.length != 0) {
             // Finish the writing session
-            this.capturedValeus.push(this.state.currentBuffer);
-            this.state.currentBuffer = "";
-            this.state.writing = true;
-            // this.term.write('\n')
+            this.capturedValeus.push(this.currentBuffer);
+            this.currentBuffer = "";
+            this.printing = true;
+            // Add a new line
             this.term.state.setCursor(0, this.term.state.cursor.y + 1);
             this.term.state.insertLine();
             this.capturePromiseResolve();
@@ -10040,7 +10043,7 @@ class Controller {
     }
     captureInput() {
         return (function ($return, $error) {
-            this.state.writing = false;
+            this.printing = false;
             return $return(new Promise((resolve) => {
                 this.capturePromiseResolve = resolve;
             }));

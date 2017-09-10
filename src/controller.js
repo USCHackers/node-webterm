@@ -7,58 +7,60 @@ function timeout(ms) {
 class Controller {
 
   constructor(term, termContainer) {
-    this.state = {};
-    this.state.writing = true; // If the this is writing, don't allow user input
-    this.state.currentBuffer = ""; // This is the current user input.
-
-    this.capturedValeus = [];
+    // State
+    this.printing = true; // If the this is writing, don't allow user input
+    this.currentBuffer = ""; // This is the current user input.
     this.capturePromiseResolve = null;
 
+    // Storage
+    this.capturedValeus = [];
 
+    // Setup terminal loop
     this.term = term;
     this.dest = new Stream({decodeStrings: false, encoding: 'utf-8'});
     this.dest.writable = true;
     this.term.dom(termContainer).pipe(this.dest);
 
+    // Bind methods to `this`
     this.dest.write = this.handleCharacter.bind(this);
     this.captureInput = this.captureInput.bind(this);
   }
 
   handleCharacter(data) {
-    if(this.state.writing) {
-      console.log('Not in writing state, ignoring character');
+    if (this.printing) {
+      console.trace('In writing state, ignoring character');
       return;
     }
 
-      if (data.length === 1 && data[0] === 127) {
-        if(this.state.currentBuffer.length > 0) {
-          this.term.write('\b');
-          this.term.state.removeChar(1);
-          this.state.currentBuffer =  this.state.currentBuffer.slice(0, -1);
-        }
-        return;
+    if (data.length === 1 && data[0] === 127) {
+      if(this.currentBuffer.length > 0) {
+        this.term.write('\b');
+        this.term.state.removeChar(1);
+        this.currentBuffer =  this.currentBuffer.slice(0, -1);
       }
+      return;
+    }
 
-      if(data.length === 1 && data[0] >= 32 && data[0] <= 125) {
-        this.term.write(data);
-        this.state.currentBuffer += data.toString();
-      }
+    if(data.length === 1 && data[0] >= 32 && data[0] <= 125) {
+      this.term.write(data);
+      this.currentBuffer += data.toString();
+    }
 
-      if (data.length === 1 && data[0] === 13 && this.state.currentBuffer.length != 0) {
-          // Finish the writing session
+    if (data.length === 1 && data[0] === 13 && this.currentBuffer.length != 0) {
+        // Finish the writing session
+        this.capturedValeus.push(this.currentBuffer);
+        this.currentBuffer = "";
+        this.printing = true;
 
-          this.capturedValeus.push(this.state.currentBuffer);
-          this.state.currentBuffer = "";
-          this.state.writing = true;
-          // this.term.write('\n')
-          this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-          this.term.state.insertLine()
-          this.capturePromiseResolve();
-      }
+        // Add a new line
+        this.term.state.setCursor(0, this.term.state.cursor.y + 1);
+        this.term.state.insertLine()
+        this.capturePromiseResolve();
+    }
   }
 
   async captureInput() {
-    this.state.writing = false;
+    this.printing = false;
     return new Promise((resolve) => {
       this.capturePromiseResolve = resolve;
     });
