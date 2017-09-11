@@ -10134,14 +10134,14 @@ class Controller {
     sendAttendeeData() {
         return (function ($return, $error) {
             let response;
-            return fetch('http://localhost:3000/attendees', {
+            return fetch('https://zesty-haze.glitch.me/attendees', {
                 headers: {
                     "Content-Type": 'application/json'
                 },
                 method: 'post',
                 body: JSON.stringify(this.capturedValues)
             }).then((function ($await_11) {
-                response = $await_11;
+                response = $await_11; //  http://localhost:3000/attendees
                 return $return();
             }).$asyncbind(this, $error), $error);
         }).$asyncbind(this, true);

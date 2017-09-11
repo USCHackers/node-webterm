@@ -118,7 +118,7 @@ class Controller {
   }
 
   async sendAttendeeData() {
-    let response = await fetch('http://localhost:3000/attendees', {
+    let response = await fetch('https://zesty-haze.glitch.me/attendees', {  // http://localhost:3000/attendees
       headers: {"Content-Type": 'application/json'},
       method: 'post',
       body: JSON.stringify(this.capturedValues)
