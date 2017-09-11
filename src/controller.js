@@ -16,14 +16,17 @@ class Controller {
 
     // Storage
     this.capturedValues = {};
-//
-//     this.hackOn = '%c\n
-//     __  __     ______     ______     __  __        ______     __   __
-//    /\ \_\ \   /\  __ \   /\  ___\   /\ \/ /       /\  __ \   /\  -.\ \
-//    \ \  __ \  \ \  __ \  \ \ \____  \ \  _ -.     \ \ \/\ \  \ \ \-.  \
-//     \ \_\ \_\  \ \_\ \_\  \ \_____\  \ \_\ \_\     \ \_____\  \ \_\\ \_\
-//      \/_/\/_/   \/_/\/_/   \/_____/   \/_/\/_/      \/_____/   \/_/ \/_/
-// \n'
+
+    this.hackOn = `
+
+     __  __     ______     ______     __  __        ______     __   __
+    /\ \_\ \   /\  __ \   /\  ___\   /\ \/ /       /\  __ \   /\ "-.\ \
+    \ \  __ \  \ \  __ \  \ \ \____  \ \  _"-.     \ \ \/\ \  \ \ \-.  \
+     \ \_\ \_\  \ \_\ \_\  \ \_____\  \ \_\ \_\     \ \_____\  \ \_\\"\_\
+      \/_/\/_/   \/_/\/_/   \/_____/   \/_/\/_/      \/_____/   \/_/ \/_/
+
+
+`;
 
     // Setup terminal loop
     this.term = term;
@@ -104,16 +107,26 @@ class Controller {
     }
   }
 
-  async typeCharacter(character, done) {
+  async typeCharacter(character, done, speed) {
     this.term.write(character);
-    await timeout(25);
+    await timeout(speed);
   }
 
   async typeString(buffer) {
     // This will write to the terminal with a certain speed
     console.log(buffer.substring(0,2));
     for (var i = 0; i < buffer.length; i++) {
-      await this.typeCharacter(buffer[i])
+      await this.typeCharacter(buffer[i], null, 50)
+    }
+  }
+
+  async typeHackOn() {
+    console.log(this.hackOn);
+    for (var i = 0; i < this.hackOn.length; i++) {
+      await this.typeCharacter(this.hackOn[i], null, 0);
+      if(i === 74) {
+        this.term.state.setCursor(0, this.term.state.cursor.y+1);
+      }
     }
   }
 
@@ -127,17 +140,19 @@ class Controller {
 
   run() {
     (async ()=> {
+      await this.typeHackOn();
       await this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/20.")
+      await timeout(250);
       this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-      await this.typeString("Projects. ");
-      await timeout(1);
+      await this.typeString("Speakers. ");
+      await timeout(250);
       await this.typeString("Boba. ");
-      await timeout(1);
+      await timeout(250);
       await this.typeString("Hackers. ");
-      await timeout(1);
+      await timeout(250);
       this.term.state.setCursor(0, this.term.state.cursor.y + 2);
       await this.typeString("You down? ");
-      await timeout(1);
+      await timeout(250);
       await this.typeString("Enter your full name: ");
       await this.captureValidatedInput('name', (input) => {
         return null;  // no validation necessary for name
@@ -155,9 +170,9 @@ class Controller {
       this.term.state.setCursor(0, this.term.state.cursor.y + 2);
       console.log('got to method call');
       this.sendAttendeeData();
+      await this.typeHackOn();
 
-      // await this.typeString(this.hackOn);
-      await timeout(1);
+      await timeout(20000);
       await this.typeString("You\'re still here? Might want to view the page source...");
       this.term.state.setCursor(0, this.term.state.cursor.y + 1);
       await timeout(1);
