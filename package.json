@@ -14,8 +14,10 @@
   "author": "Brian Anglin <banglin@usc.edu> and Suvir Copparam <scoppara@usc.edu>",
   "license": "MIT",
   "dependencies": {
+    "body-parser": "^1.18.0",
     "browserify": "^14.4.0",
     "browserify-nodent": "^1.0.22",
+    "csv-write-stream": "^2.0.0",
     "express": "^4.15.4",
     "forever": "^0.15.3",
     "terminal.js": "^1.0.3"

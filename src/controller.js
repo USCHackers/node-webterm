@@ -11,9 +11,11 @@ class Controller {
     this.printing = true; // If the this is writing, don't allow user input
     this.currentBuffer = ""; // This is the current user input.
     this.capturePromiseResolve = null;
+    this.captureInputType = ""; // will be set to the input we are accepting
+    this.inputValidator = null;
 
     // Storage
-    this.capturedValeus = [];
+    this.capturedValues = {};
 //
 //     this.hackOn = '%c\n
 //     __  __     ______     ______     __  __        ______     __   __
@@ -49,22 +51,35 @@ class Controller {
       return;
     }
 
-    if(data.length === 1 && data[0] >= 32 && data[0] <= 125) {
+    console.log('data length: ', data);
+    if (data.length === 1 && data[0] === 13 && this.currentBuffer.length != 0) {
+        // Finish the writing session
+        this.printing = true;
+        // Add a new line
+        this.addNewLine();
+        let capturedInput = this.currentBuffer;
+        this.currentBuffer = "";
+        this.capturePromiseResolve(capturedInput);
+    }
+
+    var isValid = true;
+
+    for( var i = 0; i < data.length; i++) {
+      if(data[i] < 32 || data[i] > 125) {
+        isValid = false;
+        break;
+      }
+    }
+    if(isValid) {
       this.term.write(data);
       this.currentBuffer += data.toString();
     }
 
-    if (data.length === 1 && data[0] === 13 && this.currentBuffer.length != 0) {
-        // Finish the writing session
-        this.capturedValeus.push(this.currentBuffer);
-        this.currentBuffer = "";
-        this.printing = true;
+  }
 
-        // Add a new line
-        this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-        this.term.state.insertLine()
-        this.capturePromiseResolve();
-    }
+  addNewLine() {
+    this.term.state.setCursor(0, this.term.state.cursor.y + 1);
+    this.term.state.insertLine();
   }
 
   async captureInput() {
@@ -72,6 +87,21 @@ class Controller {
     return new Promise((resolve) => {
       this.capturePromiseResolve = resolve;
     });
+  }
+
+  async captureValidatedInput(inputType, validator) {
+    while (true) {
+      this.printing = false;
+      let capturedInput = await new Promise((resolve) => {
+        this.capturePromiseResolve = resolve;
+      });
+      let errorMessage = validator(capturedInput);
+      if (errorMessage === null) {
+        this.capturedValues[inputType] = capturedInput;
+        return;
+      }
+      await this.typeString(errorMessage);
+    }
   }
 
   async typeCharacter(character, done) {
@@ -85,6 +115,14 @@ class Controller {
     for (var i = 0; i < buffer.length; i++) {
       await this.typeCharacter(buffer[i])
     }
+  }
+
+  async sendAttendeeData() {
+    let response = await fetch('http://localhost:3000/attendees', {
+      headers: {"Content-Type": 'application/json'},
+      method: 'post',
+      body: JSON.stringify(this.capturedValues)
+    });
   }
 
   run() {
@@ -101,11 +139,22 @@ class Controller {
       await this.typeString("You down? ");
       await timeout(1);
       await this.typeString("Enter your full name: ");
-      await this.captureInput();
+      await this.captureValidatedInput('name', (input) => {
+        return null;  // no validation necessary for name
+      });
+      console.log(this.capturedValues);
       await this.typeString("And your usc email: ");
-      await this.captureInput();
-      await this.typeString("We'll see you at 7 on 9/20 in Annenberg West Lobby.");
+      await this.captureValidatedInput("email", (input) => {
+        if(input.endsWith('@usc.edu')) {
+          return null;
+        } else {
+          return "That is not a valid USC email. Please enter an email ending in '@usc.edu'";
+        }
+      });
+      await this.typeString("We'll see you at 7PM on 9/20 in Annenberg West Lobby.");
       this.term.state.setCursor(0, this.term.state.cursor.y + 2);
+      console.log('got to method call');
+      this.sendAttendeeData();
 
       // await this.typeString(this.hackOn);
       await timeout(1);
@@ -113,7 +162,13 @@ class Controller {
       this.term.state.setCursor(0, this.term.state.cursor.y + 1);
       await timeout(1);
       await this.typeString("???: ");
-      await this.captureInput();
+      await this.captureValidatedInput("md5", (input) => {
+        if(input === '000242dc7a5257e1f265578cdcc6c3fd') {
+          return null;
+        } else {
+          return "???: ";
+        }
+      });
 
       // take input and check for equality to '000242dc7a5257e1f265578cdcc6c3fd'
       this.term.state.setCursor(0, this.term.state.cursor.y + 1);
