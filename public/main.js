@@ -9993,7 +9993,7 @@ function timeout(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-HACK_ON = `
+let HACK_ON = `
   __  __     ______     ______     __  __        ______     __   __
  /\\ \\_\\ \\   /\\  __ \\   /\\  ___\\   /\\ \\/ /       /\\  __ \\   /\\ "-.\\ \\
  \\ \\  __ \\  \\ \\  __ \\  \\ \\ \\____  \\ \\  _"-.     \\ \\ \\/\\ \\  \\ \\ \\-.  \\
@@ -10163,7 +10163,7 @@ class Controller {
     sendAttendeeData() {
         return (function ($return, $error) {
             let response;
-            return fetch('https://zesty-haze.glitch.me/attendees', {
+            return fetch('/attendees', {
                 headers: {
                     "Content-Type": 'application/json'
                 },

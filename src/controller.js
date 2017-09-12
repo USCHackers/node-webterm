@@ -4,7 +4,7 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-HACK_ON = `
+let HACK_ON = `
   __  __     ______     ______     __  __        ______     __   __
  /\\ \\_\\ \\   /\\  __ \\   /\\  ___\\   /\\ \\/ /       /\\  __ \\   /\\ "-.\\ \\
  \\ \\  __ \\  \\ \\  __ \\  \\ \\ \\____  \\ \\  _"-.     \\ \\ \\/\\ \\  \\ \\ \\-.  \\
@@ -129,7 +129,7 @@ class Controller {
   }
 
   async sendAttendeeData() {
-    let response = await fetch('https://zesty-haze.glitch.me/attendees', {  // http://localhost:3000/attendees
+    let response = await fetch('/attendees', {  // http://localhost:3000/attendees
       headers: {"Content-Type": 'application/json'},
       method: 'post',
       body: JSON.stringify(this.capturedValues)
