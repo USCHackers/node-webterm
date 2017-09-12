@@ -138,16 +138,17 @@ class Controller {
 
   run() {
     (async ()=> {
-      await this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/20.")
+      await this.typeString("Welcome, USC Hacker. You are invited to come to our Hacker Orientation on 9/20.")
       await timeout(250);
-      this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-      await this.typeString("Speakers. ");
+      this.addNewLine();
+      await this.typeString("Projects. ");
       await timeout(250);
       await this.typeString("Boba. ");
       await timeout(250);
       await this.typeString("Hackers. ");
       await timeout(250);
-      this.term.state.setCursor(0, this.term.state.cursor.y + 2);
+      this.addNewLine();
+      this.addNewLine();
       await this.typeString("You down? ");
       await timeout(250);
       await this.typeString("Enter your full name: ");
@@ -162,16 +163,21 @@ class Controller {
           return "That is not a valid USC email. Please enter an email ending in '@usc.edu'";
         }
       });
+      this.addNewLine();
       await this.typeString("We'll see you at 7PM on 9/20 in Annenberg West Lobby.");
-      this.term.state.setCursor(0, this.term.state.cursor.y + 2);
+      this.addNewLine();
+      this.addNewLine();
       this.sendAttendeeData();
       await this.typeHackOn();
       this.addNewLine();
-      await this.typeString(";)");
+      await timeout(250);
+      await this.typeString(";");
+      await timeout(100);
+      await this.typeString(")");
       this.addNewLine();
       await timeout(20000);
       await this.typeString("You\'re still here? Might want to view the page source...");
-      this.term.state.setCursor(0, this.term.state.cursor.y + 1);
+      this.addNewLine();
       await timeout(1);
       await this.typeString("???: ");
       await this.captureValidatedInput("md5", (input) => {
@@ -183,7 +189,7 @@ class Controller {
       });
 
       // take input and check for equality to '000242dc7a5257e1f265578cdcc6c3fd'
-      this.term.state.setCursor(0, this.term.state.cursor.y + 1);
+      this.addNewLine();
       await this.typeString("You were added to the list \"TOP SECRET\". We\'ll be in touch soon. Hack On.")
       // write to output.txt/csv on server-side
       this.sendAttendeeData();  // resend attendee data if they get secret

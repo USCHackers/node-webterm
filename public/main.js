@@ -10178,16 +10178,17 @@ class Controller {
     run() {
         (() => {
             return (function ($return, $error) {
-                return this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/20.").then((function ($await_17) {
+                return this.typeString("Welcome, USC Hacker. You are invited to come to our Hacker Orientation on 9/20.").then((function ($await_17) {
                     return timeout(250).then((function ($await_18) {
-                        this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-                        return this.typeString("Speakers. ").then((function ($await_19) {
+                        this.addNewLine();
+                        return this.typeString("Projects. ").then((function ($await_19) {
                             return timeout(250).then((function ($await_20) {
                                 return this.typeString("Boba. ").then((function ($await_21) {
                                     return timeout(250).then((function ($await_22) {
                                         return this.typeString("Hackers. ").then((function ($await_23) {
                                             return timeout(250).then((function ($await_24) {
-                                                this.term.state.setCursor(0, this.term.state.cursor.y + 2);
+                                                this.addNewLine();
+                                                this.addNewLine();
                                                 return this.typeString("You down? ").then((function ($await_25) {
                                                     return timeout(250).then((function ($await_26) {
                                                         return this.typeString("Enter your full name: ").then((function ($await_27) {
@@ -10202,33 +10203,41 @@ class Controller {
                                                                             return "That is not a valid USC email. Please enter an email ending in '@usc.edu'";
                                                                         }
                                                                     }).then((function ($await_30) {
+                                                                        this.addNewLine();
                                                                         return this.typeString("We'll see you at 7PM on 9/20 in Annenberg West Lobby.").then((function ($await_31) {
-                                                                            this.term.state.setCursor(0, this.term.state.cursor.y + 2);
+                                                                            this.addNewLine();
+                                                                            this.addNewLine();
                                                                             this.sendAttendeeData();
                                                                             return this.typeHackOn().then((function ($await_32) {
                                                                                 this.addNewLine();
-                                                                                return this.typeString(";)").then((function ($await_33) {
-                                                                                    this.addNewLine();
-                                                                                    return timeout(20000).then((function ($await_34) {
-                                                                                        return this.typeString("You\'re still here? Might want to view the page source...").then((function ($await_35) {
-                                                                                            this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-                                                                                            return timeout(1).then((function ($await_36) {
-                                                                                                return this.typeString("???: ").then((function ($await_37) {
-                                                                                                    return this.captureValidatedInput("md5", (input) => {
-                                                                                                        if (input === '000242dc7a5257e1f265578cdcc6c3fd') {
-                                                                                                            return null;
-                                                                                                        } else {
-                                                                                                            return "???: ";
-                                                                                                        }
-                                                                                                    }).then((function ($await_38) {
-                                                                                                        // take input and check for equality to '000242dc7a5257e1f265578cdcc6c3fd'
-                                                                                                        this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-                                                                                                        return this.typeString("You were added to the list \"TOP SECRET\". We\'ll be in touch soon. Hack On.").then((function ($await_39) {
-                                                                                                            // write to output.txt/csv on server-side
-                                                                                                            // take input and check for equality to '000242dc7a5257e1f265578cdcc6c3fd'
-                                                                                                            // write to output.txt/csv on server-side
-                                                                                                            this.sendAttendeeData(); //  resend attendee data if they get secret //  no validation necessary for name //  resend attendee data if they get secret
-                                                                                                            return $return();
+                                                                                return timeout(250).then((function ($await_33) {
+                                                                                    return this.typeString(";").then((function ($await_34) {
+                                                                                        return timeout(100).then((function ($await_35) {
+                                                                                            return this.typeString(")").then((function ($await_36) {
+                                                                                                this.addNewLine();
+                                                                                                return timeout(20000).then((function ($await_37) {
+                                                                                                    return this.typeString("You\'re still here? Might want to view the page source...").then((function ($await_38) {
+                                                                                                        this.addNewLine();
+                                                                                                        return timeout(1).then((function ($await_39) {
+                                                                                                            return this.typeString("???: ").then((function ($await_40) {
+                                                                                                                return this.captureValidatedInput("md5", (input) => {
+                                                                                                                    if (input === '000242dc7a5257e1f265578cdcc6c3fd') {
+                                                                                                                        return null;
+                                                                                                                    } else {
+                                                                                                                        return "???: ";
+                                                                                                                    }
+                                                                                                                }).then((function ($await_41) {
+                                                                                                                    // take input and check for equality to '000242dc7a5257e1f265578cdcc6c3fd'
+                                                                                                                    this.addNewLine();
+                                                                                                                    return this.typeString("You were added to the list \"TOP SECRET\". We\'ll be in touch soon. Hack On.").then((function ($await_42) {
+                                                                                                                        // write to output.txt/csv on server-side
+                                                                                                                        // take input and check for equality to '000242dc7a5257e1f265578cdcc6c3fd'
+                                                                                                                        // write to output.txt/csv on server-side
+                                                                                                                        this.sendAttendeeData(); //  resend attendee data if they get secret //  no validation necessary for name //  resend attendee data if they get secret
+                                                                                                                        return $return();
+                                                                                                                    }).$asyncbind(this, $error), $error);
+                                                                                                                }).$asyncbind(this, $error), $error);
+                                                                                                            }).$asyncbind(this, $error), $error);
                                                                                                         }).$asyncbind(this, $error), $error);
                                                                                                     }).$asyncbind(this, $error), $error);
                                                                                                 }).$asyncbind(this, $error), $error);
