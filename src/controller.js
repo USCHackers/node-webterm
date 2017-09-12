@@ -4,6 +4,14 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+HACK_ON = `
+  __  __     ______     ______     __  __        ______     __   __
+ /\\ \\_\\ \\   /\\  __ \\   /\\  ___\\   /\\ \\/ /       /\\  __ \\   /\\ "-.\\ \\
+ \\ \\  __ \\  \\ \\  __ \\  \\ \\ \\____  \\ \\  _"-.     \\ \\ \\/\\ \\  \\ \\ \\-.  \\
+  \\ \\_\\ \\_\\  \\ \\_\\ \\_\\  \\ \\_____\\  \\ \\_\\ \\_\\     \\ \\_____\\  \\ \\_\\\\"\\_\\
+   \\/_/\\/_/   \\/_/\\/_/   \\/_____/   \\/_/\\/_/      \\/_____/   \\/_/ \\/_/
+`;
+
 class Controller {
 
   constructor(term, termContainer) {
@@ -17,16 +25,7 @@ class Controller {
     // Storage
     this.capturedValues = {};
 
-    this.hackOn = `
-
-     __  __     ______     ______     __  __        ______     __   __
-    /\ \_\ \   /\  __ \   /\  ___\   /\ \/ /       /\  __ \   /\ "-.\ \
-    \ \  __ \  \ \  __ \  \ \ \____  \ \  _"-.     \ \ \/\ \  \ \ \-.  \
-     \ \_\ \_\  \ \_\ \_\  \ \_____\  \ \_\ \_\     \ \_____\  \ \_\\"\_\
-      \/_/\/_/   \/_/\/_/   \/_____/   \/_/\/_/      \/_____/   \/_/ \/_/
-
-
-`;
+    this.hackOn = HACK_ON;
 
     // Setup terminal loop
     this.term = term;
@@ -121,13 +120,14 @@ class Controller {
   }
 
   async typeHackOn() {
-    console.log(this.hackOn);
     for (var i = 0; i < this.hackOn.length; i++) {
-      await this.typeCharacter(this.hackOn[i], null, 0);
-      if(i === 74) {
-        this.term.state.setCursor(0, this.term.state.cursor.y+1);
+      if(this.hackOn[i] === '\n') {
+        this.addNewLine()
+      } else {
+        await this.typeCharacter(this.hackOn[i], null, 0);
       }
     }
+    this.addNewLine()
   }
 
   async sendAttendeeData() {
