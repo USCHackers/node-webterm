@@ -10089,6 +10089,7 @@ class Controller {
                             return $return();
                         }
                         return this.typeString(errorMessage).then((function ($await_9) {
+                            this.addNewLine();
                             return void $Loop_1_next.call(this);
                         }).$asyncbind(this, $error), $error);
                     }).$asyncbind(this, $error), $error);

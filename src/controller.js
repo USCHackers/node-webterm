@@ -102,6 +102,7 @@ class Controller {
         return;
       }
       await this.typeString(errorMessage);
+      this.addNewLine();
     }
   }
 
