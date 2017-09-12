@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 
 app.post('/attendees', (req, res) => {
   var writer = csvWriter();
-  writer.pipe(fs.createWriteStream('output.csv', {flags: 'a'}));
+  writer.pipe(fs.createWriteStream(path.join(__dirname, '.data', 'output.csv'), {flags: 'a'}));
   writer.write({name: req.body.name, email: req.body.email, md5: req.body.md5});
   writer.end();
   console.log(req.body);
@@ -21,7 +21,7 @@ app.post('/attendees', (req, res) => {
 
 app.get('/download/:secret', (req, res)  => {
   if (req.params.secret === process.env.SECRET) {
-    res.sendFile(path.join(__dirname, 'output.csv'));
+    res.sendFile(path.join(__dirname, '.data', 'output.csv'));
   } else {
     res.sendStatus(401);
   }
