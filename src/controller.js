@@ -53,7 +53,6 @@ class Controller {
       return;
     }
 
-    console.log('data length: ', data);
     if (data.length === 1 && data[0] === 13 && this.currentBuffer.length != 0) {
         // Finish the writing session
         this.printing = true;
@@ -113,7 +112,6 @@ class Controller {
 
   async typeString(buffer) {
     // This will write to the terminal with a certain speed
-    console.log(buffer.substring(0,2));
     for (var i = 0; i < buffer.length; i++) {
       await this.typeCharacter(buffer[i], null, 50)
     }
@@ -140,7 +138,6 @@ class Controller {
 
   run() {
     (async ()=> {
-      await this.typeHackOn();
       await this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/20.")
       await timeout(250);
       this.term.state.setCursor(0, this.term.state.cursor.y + 1);
@@ -157,7 +154,6 @@ class Controller {
       await this.captureValidatedInput('name', (input) => {
         return null;  // no validation necessary for name
       });
-      console.log(this.capturedValues);
       await this.typeString("And your usc email: ");
       await this.captureValidatedInput("email", (input) => {
         if(input.endsWith('@usc.edu')) {
@@ -168,10 +164,11 @@ class Controller {
       });
       await this.typeString("We'll see you at 7PM on 9/20 in Annenberg West Lobby.");
       this.term.state.setCursor(0, this.term.state.cursor.y + 2);
-      console.log('got to method call');
       this.sendAttendeeData();
       await this.typeHackOn();
-
+      this.addNewLine();
+      await this.typeString(";)");
+      this.addNewLine();
       await timeout(20000);
       await this.typeString("You\'re still here? Might want to view the page source...");
       this.term.state.setCursor(0, this.term.state.cursor.y + 1);
@@ -189,7 +186,7 @@ class Controller {
       this.term.state.setCursor(0, this.term.state.cursor.y + 1);
       await this.typeString("You were added to the list \"TOP SECRET\". We\'ll be in touch soon. Hack On.")
       // write to output.txt/csv on server-side
-
+      this.sendAttendeeData();  // resend attendee data if they get secret
       return;
     })()
   }

@@ -9993,6 +9993,13 @@ function timeout(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+HACK_ON = `
+  __  __     ______     ______     __  __        ______     __   __
+ /\\ \\_\\ \\   /\\  __ \\   /\\  ___\\   /\\ \\/ /       /\\  __ \\   /\\ "-.\\ \\
+ \\ \\  __ \\  \\ \\  __ \\  \\ \\ \\____  \\ \\  _"-.     \\ \\ \\/\\ \\  \\ \\ \\-.  \\
+  \\ \\_\\ \\_\\  \\ \\_\\ \\_\\  \\ \\_____\\  \\ \\_\\ \\_\\     \\ \\_____\\  \\ \\_\\\\"\\_\\
+   \\/_/\\/_/   \\/_/\\/_/   \\/_____/   \\/_/\\/_/      \\/_____/   \\/_/ \\/_/
+`;
 class Controller {
     constructor(term, termContainer) {
         // State
@@ -10003,16 +10010,7 @@ class Controller {
         this.inputValidator = null;
         // Storage
         this.capturedValues = {};
-        this.hackOn = `
-
-     __  __     ______     ______     __  __        ______     __   __
-    /\ \_\ \   /\  __ \   /\  ___\   /\ \/ /       /\  __ \   /\ "-.\ \
-    \ \  __ \  \ \  __ \  \ \ \____  \ \  _"-.     \ \ \/\ \  \ \ \-.  \
-     \ \_\ \_\  \ \_\ \_\  \ \_____\  \ \_\ \_\     \ \_____\  \ \_\\"\_\
-      \/_/\/_/   \/_/\/_/   \/_____/   \/_/\/_/      \/_____/   \/_/ \/_/
-
-
-`;
+        this.hackOn = HACK_ON;
         // Setup terminal loop
         this.term = term;
         this.dest = new Stream({
@@ -10038,7 +10036,6 @@ class Controller {
             }
             return;
         }
-        console.log('data length: ', data);
         if (data.length === 1 && data[0] === 13 && this.currentBuffer.length != 0) {
             // Finish the writing session
             this.printing = true;
@@ -10084,20 +10081,20 @@ class Controller {
                     this.printing = false;
                     return new Promise((resolve) => {
                         this.capturePromiseResolve = resolve;
-                    }).then((function ($await_7) {
-                        capturedInput = $await_7;
+                    }).then((function ($await_8) {
+                        capturedInput = $await_8;
                         errorMessage = validator(capturedInput);
                         if (errorMessage === null) {
                             this.capturedValues[inputType] = capturedInput;
                             return $return();
                         }
-                        return this.typeString(errorMessage).then((function ($await_8) {
+                        return this.typeString(errorMessage).then((function ($await_9) {
                             return void $Loop_1_next.call(this);
                         }).$asyncbind(this, $error), $error);
                     }).$asyncbind(this, $error), $error);
                 } else 
                     return void $Loop_1_exit();
-            }).$asyncbind(this).then((function ($await_9) {
+            }).$asyncbind(this).then((function ($await_10) {
                 return $return();
             }).$asyncbind(this, $error), $error);
         }).$asyncbind(this, true);
@@ -10105,7 +10102,7 @@ class Controller {
     typeCharacter(character, done, speed) {
         return (function ($return, $error) {
             this.term.write(character);
-            return timeout(speed).then((function ($await_10) {
+            return timeout(speed).then((function ($await_11) {
                 return $return();
             }).$asyncbind(this, $error), $error);
         }).$asyncbind(this, true);
@@ -10114,7 +10111,6 @@ class Controller {
         return (function ($return, $error) {
             var i;
             // This will write to the terminal with a certain speed
-            console.log(buffer.substring(0, 2));
             i = 0;
             return (function $Loop_2($Loop_2_exit, $error) {
                 function $Loop_2_next() {
@@ -10123,12 +10119,12 @@ class Controller {
                 }
                 
                 if (i < buffer.length) {
-                    return this.typeCharacter(buffer[i], null, 50).then((function ($await_11) {
+                    return this.typeCharacter(buffer[i], null, 50).then((function ($await_12) {
                         return void $Loop_2_next.call(this);
                     }).$asyncbind(this, $error), $error);
                 } else 
                     return void $Loop_2_exit();
-            }).$asyncbind(this).then((function ($await_12) {
+            }).$asyncbind(this).then((function ($await_13) {
                 return $return();
             }).$asyncbind(this, $error), $error);
         }).$asyncbind(this, true);
@@ -10136,7 +10132,6 @@ class Controller {
     typeHackOn() {
         return (function ($return, $error) {
             var i;
-            console.log(this.hackOn);
             i = 0;
             return (function $Loop_3($Loop_3_exit, $error) {
                 function $Loop_3_next() {
@@ -10145,15 +10140,22 @@ class Controller {
                 }
                 
                 if (i < this.hackOn.length) {
-                    return this.typeCharacter(this.hackOn[i], null, 0).then((function ($await_13) {
-                        if (i === 74) {
-                            this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-                        }
+                    function $IfStatement_7() {
                         return void $Loop_3_next.call(this);
-                    }).$asyncbind(this, $error), $error);
+                    }
+                    
+                    if (this.hackOn[i] === '\n') {
+                        this.addNewLine();
+                        return $IfStatement_7.call(this);
+                    } else {
+                        return this.typeCharacter(this.hackOn[i], null, 0).then((function ($await_14) {
+                            return $IfStatement_7.call(this);
+                        }).$asyncbind(this, $error), $error);
+                    }
                 } else 
                     return void $Loop_3_exit();
-            }).$asyncbind(this).then((function ($await_14) {
+            }).$asyncbind(this).then((function ($await_15) {
+                this.addNewLine();
                 return $return();
             }).$asyncbind(this, $error), $error);
         }).$asyncbind(this, true);
@@ -10167,8 +10169,8 @@ class Controller {
                 },
                 method: 'post',
                 body: JSON.stringify(this.capturedValues)
-            }).then((function ($await_15) {
-                response = $await_15; //  http://localhost:3000/attendees
+            }).then((function ($await_16) {
+                response = $await_16; //  http://localhost:3000/attendees
                 return $return();
             }).$asyncbind(this, $error), $error);
         }).$asyncbind(this, true);
@@ -10176,56 +10178,57 @@ class Controller {
     run() {
         (() => {
             return (function ($return, $error) {
-                return this.typeHackOn().then((function ($await_16) {
-                    return this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/20.").then((function ($await_17) {
-                        return timeout(250).then((function ($await_18) {
-                            this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-                            return this.typeString("Speakers. ").then((function ($await_19) {
-                                return timeout(250).then((function ($await_20) {
-                                    return this.typeString("Boba. ").then((function ($await_21) {
-                                        return timeout(250).then((function ($await_22) {
-                                            return this.typeString("Hackers. ").then((function ($await_23) {
-                                                return timeout(250).then((function ($await_24) {
-                                                    this.term.state.setCursor(0, this.term.state.cursor.y + 2);
-                                                    return this.typeString("You down? ").then((function ($await_25) {
-                                                        return timeout(250).then((function ($await_26) {
-                                                            return this.typeString("Enter your full name: ").then((function ($await_27) {
-                                                                return this.captureValidatedInput('name', (input) => {
-                                                                    return null; //  no validation necessary for name
-                                                                }).then((function ($await_28) {
-                                                                    console.log(this.capturedValues);
-                                                                    return this.typeString("And your usc email: ").then((function ($await_29) {
-                                                                        return this.captureValidatedInput("email", (input) => {
-                                                                            if (input.endsWith('@usc.edu')) {
-                                                                                return null;
-                                                                            } else {
-                                                                                return "That is not a valid USC email. Please enter an email ending in '@usc.edu'";
-                                                                            }
-                                                                        }).then((function ($await_30) {
-                                                                            return this.typeString("We'll see you at 7PM on 9/20 in Annenberg West Lobby.").then((function ($await_31) {
-                                                                                this.term.state.setCursor(0, this.term.state.cursor.y + 2);
-                                                                                console.log('got to method call');
-                                                                                this.sendAttendeeData();
-                                                                                return this.typeHackOn().then((function ($await_32) {
-                                                                                    return timeout(20000).then((function ($await_33) {
-                                                                                        return this.typeString("You\'re still here? Might want to view the page source...").then((function ($await_34) {
+                return this.typeString("USC Hacker. You are invited to come to our Hacker Orientation on 9/20.").then((function ($await_17) {
+                    return timeout(250).then((function ($await_18) {
+                        this.term.state.setCursor(0, this.term.state.cursor.y + 1);
+                        return this.typeString("Speakers. ").then((function ($await_19) {
+                            return timeout(250).then((function ($await_20) {
+                                return this.typeString("Boba. ").then((function ($await_21) {
+                                    return timeout(250).then((function ($await_22) {
+                                        return this.typeString("Hackers. ").then((function ($await_23) {
+                                            return timeout(250).then((function ($await_24) {
+                                                this.term.state.setCursor(0, this.term.state.cursor.y + 2);
+                                                return this.typeString("You down? ").then((function ($await_25) {
+                                                    return timeout(250).then((function ($await_26) {
+                                                        return this.typeString("Enter your full name: ").then((function ($await_27) {
+                                                            return this.captureValidatedInput('name', (input) => {
+                                                                return null; //  no validation necessary for name
+                                                            }).then((function ($await_28) {
+                                                                return this.typeString("And your usc email: ").then((function ($await_29) {
+                                                                    return this.captureValidatedInput("email", (input) => {
+                                                                        if (input.endsWith('@usc.edu')) {
+                                                                            return null;
+                                                                        } else {
+                                                                            return "That is not a valid USC email. Please enter an email ending in '@usc.edu'";
+                                                                        }
+                                                                    }).then((function ($await_30) {
+                                                                        return this.typeString("We'll see you at 7PM on 9/20 in Annenberg West Lobby.").then((function ($await_31) {
+                                                                            this.term.state.setCursor(0, this.term.state.cursor.y + 2);
+                                                                            this.sendAttendeeData();
+                                                                            return this.typeHackOn().then((function ($await_32) {
+                                                                                this.addNewLine();
+                                                                                return this.typeString(";)").then((function ($await_33) {
+                                                                                    this.addNewLine();
+                                                                                    return timeout(20000).then((function ($await_34) {
+                                                                                        return this.typeString("You\'re still here? Might want to view the page source...").then((function ($await_35) {
                                                                                             this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-                                                                                            return timeout(1).then((function ($await_35) {
-                                                                                                return this.typeString("???: ").then((function ($await_36) {
+                                                                                            return timeout(1).then((function ($await_36) {
+                                                                                                return this.typeString("???: ").then((function ($await_37) {
                                                                                                     return this.captureValidatedInput("md5", (input) => {
                                                                                                         if (input === '000242dc7a5257e1f265578cdcc6c3fd') {
                                                                                                             return null;
                                                                                                         } else {
                                                                                                             return "???: ";
                                                                                                         }
-                                                                                                    }).then((function ($await_37) {
+                                                                                                    }).then((function ($await_38) {
                                                                                                         // take input and check for equality to '000242dc7a5257e1f265578cdcc6c3fd'
                                                                                                         this.term.state.setCursor(0, this.term.state.cursor.y + 1);
-                                                                                                        return this.typeString("You were added to the list \"TOP SECRET\". We\'ll be in touch soon. Hack On.").then((function ($await_38) {
+                                                                                                        return this.typeString("You were added to the list \"TOP SECRET\". We\'ll be in touch soon. Hack On.").then((function ($await_39) {
                                                                                                             // write to output.txt/csv on server-side
                                                                                                             // take input and check for equality to '000242dc7a5257e1f265578cdcc6c3fd'
                                                                                                             // write to output.txt/csv on server-side
-                                                                                                            return $return(); //  no validation necessary for name
+                                                                                                            this.sendAttendeeData(); //  resend attendee data if they get secret //  no validation necessary for name //  resend attendee data if they get secret
+                                                                                                            return $return();
                                                                                                         }).$asyncbind(this, $error), $error);
                                                                                                     }).$asyncbind(this, $error), $error);
                                                                                                 }).$asyncbind(this, $error), $error);
