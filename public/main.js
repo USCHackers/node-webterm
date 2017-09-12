@@ -10163,7 +10163,7 @@ class Controller {
     sendAttendeeData() {
         return (function ($return, $error) {
             let response;
-            return fetch('https://zesty-haze.glitch.me/attendees', {
+            return fetch('/attendees', {
                 headers: {
                     "Content-Type": 'application/json'
                 },
