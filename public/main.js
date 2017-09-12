@@ -10182,9 +10182,9 @@ class Controller {
                 return this.typeString("Welcome, USC Hacker. You are invited to come to our Hacker Orientation on 9/20.").then((function ($await_17) {
                     return timeout(250).then((function ($await_18) {
                         this.addNewLine();
-                        return this.typeString("Projects. ").then((function ($await_19) {
+                        return this.typeString("Amazing Speakers. ").then((function ($await_19) {
                             return timeout(250).then((function ($await_20) {
-                                return this.typeString("Boba. ").then((function ($await_21) {
+                                return this.typeString("Inspiring Projects. ").then((function ($await_21) {
                                     return timeout(250).then((function ($await_22) {
                                         return this.typeString("Hackers. ").then((function ($await_23) {
                                             return timeout(250).then((function ($await_24) {

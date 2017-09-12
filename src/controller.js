@@ -142,9 +142,9 @@ class Controller {
       await this.typeString("Welcome, USC Hacker. You are invited to come to our Hacker Orientation on 9/20.")
       await timeout(250);
       this.addNewLine();
-      await this.typeString("Projects. ");
+      await this.typeString("Amazing Speakers. ");
       await timeout(250);
-      await this.typeString("Boba. ");
+      await this.typeString("Inspiring Projects. ");
       await timeout(250);
       await this.typeString("Hackers. ");
       await timeout(250);
